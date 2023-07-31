@@ -1,8 +1,29 @@
-import { PageProps } from "$fresh/server.ts";
+import { Handlers, PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/runtime.ts";
 import { useSignal } from "@preact/signals";
 import { Message } from "../../communication/types.ts";
 import Messages from "../../islands/Messages.tsx";
+
+export const handler: Handlers = {
+  async GET(req, ctx) {
+    return await ctx.render();
+  },
+  async POST(req, ctx) {
+    const form = await req.formData();
+    const message = form.get("message")?.toString();
+
+    // handle message
+
+    // Redirect user to thank you page.
+    // const headers = new Headers();
+    // headers.set("location", ".");
+    // return new Response(null, {
+    //   status: 200, // See Other
+    //   headers,
+    // });
+    return await ctx.render();
+  },
+};
 
 export default function Chat(props: PageProps) {
   const messages: Message[] = [
@@ -34,7 +55,7 @@ export default function Chat(props: PageProps) {
           />
           <h1 class="text-4xl font-bold">Hello {props.params.name}</h1>
           
-          <Messages messages={messagesSignal} />
+          <Messages messages={messagesSignal} userName={props.params.name} />
         </div>
       </div>
     </>
