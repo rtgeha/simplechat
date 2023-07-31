@@ -16,7 +16,7 @@ export const handler: Handlers = {
     } else {
       headers.set("location", "/");
     }
-    
+
     return new Response(null, {
       status: 303, // See Other
       headers,
@@ -41,7 +41,7 @@ export default function Home() {
           />
           <h1 class="text-4xl font-bold">Welcome to fresh chat</h1>
           <form method="post">
-            <input type="text" name="username" value="ANONYMOUS" required/>
+            <input type="text" name="username" value="ANONYMOUS" required />
             <button type="submit">Start chatting</button>
           </form>
         </div>

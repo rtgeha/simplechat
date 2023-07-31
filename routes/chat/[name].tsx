@@ -33,7 +33,6 @@ export default function Chat(props: PageProps) {
             alt="the fresh logo: a sliced lemon dripping with juice"
           />
           <h1 class="text-2xl font-bold">Hello {props.params.name}!</h1>
-          
           <Messages messages={messagesSignal} userName={props.params.name} />
         </div>
       </div>
