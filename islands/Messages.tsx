@@ -1,4 +1,4 @@
-import { useRef } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import { type Signal, useSignal } from "@preact/signals";
 import { Message } from "../communication/types.ts";
 import { server } from "../communication/server.ts";
@@ -9,9 +9,17 @@ interface MessagesProps {
   messages: Signal<Message[]>;
 }
 
+enum ConnectionState {
+  Connecting,
+  Connected,
+  Disconnected,
+}
+
 export default function Messages(props: MessagesProps) {
+  const connectionState = useSignal(ConnectionState.Disconnected);
   const messageText = useSignal("");
   const currentUserName = props.userName;
+  
   const send = () => {
     const msg: Message = {
       message: messageText.value,
@@ -21,12 +29,40 @@ export default function Messages(props: MessagesProps) {
     server.sendMessage(msg);
 
     // TODO: rely on server notification instead of doing this here manually
-    props.messages.value = props.messages.value.concat(msg);
+    //props.messages.value = props.messages.value.concat(msg);
 
     messageText.value = "";
   };
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const events = new EventSource("/api/connect");
+    events.addEventListener(
+      "open",
+      () => connectionState.value = ConnectionState.Connected,
+    );
+    events.addEventListener("error", () => {
+      switch (events.readyState) {
+        case EventSource.OPEN:
+          connectionState.value = ConnectionState.Connected;
+          console.log("connected");
+          break;
+        case EventSource.CONNECTING:
+          connectionState.value = ConnectionState.Connecting;
+          console.log("connecting");
+          break;
+        case EventSource.CLOSED:
+          connectionState.value = ConnectionState.Disconnected;
+          console.log("disconnected");
+          break;
+      }
+    });
+    events.addEventListener("message", (e) => {
+      const message = JSON.parse(e.data);
+      props.messages.value = [...props.messages.value, message];
+    });
+    return () => events.close();
+  }, []);
+
   return (
     <div class="mx-auto flex flex-col items-center justify-center" height="60%">
       <div class="flex-auto overflow-y-scroll">
