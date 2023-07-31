@@ -1,6 +1,7 @@
 import { useRef } from "preact/hooks";
 import { type Signal, useSignal } from "@preact/signals";
 import { Message } from "../communication/types.ts";
+import { server } from "../communication/server.ts";
 import twas from "twas";
 
 interface MessagesProps {
@@ -12,12 +13,14 @@ export default function Messages(props: MessagesProps) {
   const messageText = useSignal("");
   const currentUserName = props.userName;
   const send = () => {
-    //TODO: implement send logic
     const msg: Message = {
       message: messageText.value,
       from: currentUserName,
       createdAt: new Date().toISOString(),
     };
+    server.sendMessage(msg);
+
+    // TODO: rely on server notification instead of doing this here manually
     props.messages.value = props.messages.value.concat(msg);
 
     messageText.value = "";
