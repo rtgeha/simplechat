@@ -1,12 +1,12 @@
 import { useRef } from "preact/hooks";
 import { type Signal, useSignal } from "@preact/signals";
 import { Message } from "../communication/types.ts";
+import twas from "twas";
 
 interface MessagesProps {
   userName: string;
   messages: Signal<Message[]>;
 }
-//let currentUserName: string;
 
 export default function Messages(props: MessagesProps) {
   const messageText = useSignal("");
@@ -49,7 +49,7 @@ function MessageComponent({ message }: { message: Message }) {
             {message.from}
           </span>
           <span class="text-xs text-gray-400 font-extralight">
-            {message.createdAt}
+            {twas(new Date(message.createdAt).getTime())}
           </span>
         </p>
         <p class="text-sm text-gray-800">{message.message}</p>
