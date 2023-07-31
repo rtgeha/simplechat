@@ -19,7 +19,7 @@ export default function Messages(props: MessagesProps) {
   const connectionState = useSignal(ConnectionState.Disconnected);
   const messageText = useSignal("");
   const currentUserName = props.userName;
-  
+
   const send = () => {
     const msg: Message = {
       message: messageText.value,
