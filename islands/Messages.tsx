@@ -28,10 +28,6 @@ export default function Messages(props: MessagesProps) {
       createdAt: new Date().toISOString(),
     };
     server.sendMessage(msg);
-
-    // TODO: rely on server notification instead of doing this here manually
-    //props.messages.value = props.messages.value.concat(msg);
-
     messageText.value = "";
   };
 
