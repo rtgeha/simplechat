@@ -8,9 +8,8 @@ export async function handler(
 ): Promise<Response> {
   const messagesRepo = MessageRepository.getInstance();
   const message = (await req.json()) as Message;
-  console.dir(message);
 
-  // TODO: store to DB
+  // Store in memory and to DB
   messagesRepo.addMessage(message);
 
   // notify other clients
