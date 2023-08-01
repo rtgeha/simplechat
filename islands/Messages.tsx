@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { type Signal, useSignal } from "@preact/signals";
 import { Message } from "../communication/types.ts";
 import { server } from "../communication/server.ts";
@@ -19,6 +19,7 @@ export default function Messages(props: MessagesProps) {
   const connectionState = useSignal(ConnectionState.Disconnected);
   const messageText = useSignal("");
   const currentUserName = props.userName;
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const send = () => {
     const msg: Message = {
@@ -27,10 +28,6 @@ export default function Messages(props: MessagesProps) {
       createdAt: new Date().toISOString(),
     };
     server.sendMessage(msg);
-
-    // TODO: rely on server notification instead of doing this here manually
-    //props.messages.value = props.messages.value.concat(msg);
-
     messageText.value = "";
   };
 
@@ -56,16 +53,27 @@ export default function Messages(props: MessagesProps) {
     events.addEventListener("message", (e) => {
       const message = JSON.parse(e.data);
       props.messages.value = [...props.messages.value, message];
+      scrollToBottom();
     });
     return () => events.close();
   }, []);
+
+  function scrollToBottom() {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }
 
   return (
     <div class="mx-auto p-4 w-full max-w-screen-md flex flex-col items-center">
       <div class="mb-4">
         <ConnectionStateDisplay state={connectionState} />
       </div>
-      <div class="flex-auto w-full overflow-y-scroll">
+      <div
+        ref={messagesContainerRef}
+        class="flex-auto w-full h-80 overflow-y-scroll bg-gray-100 p-2 rounded-lg"
+      >
         {props.messages.value.map((msg) => (
           <MessageComponent message={msg} />
         ))}
@@ -90,7 +98,7 @@ function ConnectionStateDisplay({ state }: { state: Signal<ConnectionState> }) {
       text = "🔴 Disconnected";
       break;
   }
-  return <span class="text-center block py-2 px-4 text-lg font-bold rounded">{text}</span>;
+  return <span class="text-center block py-2 px-4 text-lg font-bold bg-gray-100 rounded">{text}</span>;
 }
 
 function MessageComponent({ message }: { message: Message }) {
