@@ -77,7 +77,7 @@ export default function Messages(props: MessagesProps) {
       <div class="mb-4">
         <ConnectionStateDisplay state={connectionState} />
       </div>
-      <div ref={messagesContainerRef} class="flex-auto w-full h-80 overflow-y-scroll p-2">
+      <div ref={messagesContainerRef} class="flex-auto w-full h-80 overflow-y-scroll p-2 bg-green-200 rounded-lg">
         {props.messages.value.map((msg) => (
           <MessageComponent
             message={msg}
