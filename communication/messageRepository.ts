@@ -1,8 +1,8 @@
 import { Message } from "../communication/types.ts";
 import { MongoClient } from "https://deno.land/x/mongo/mod.ts";
-import { config } from "https://deno.land/x/dotenv/mod.ts";
 
 class MessageRepository {
+    
   private static instance: MessageRepository;
   private messages: Message[];
 
@@ -19,16 +19,18 @@ class MessageRepository {
   }
 
   private static async loadMessagesFromDB(): Promise<Message[]> {
-    const {
-      MONGO_USERNAME,
-      MONGO_PASSWORD,
-      MONGO_HOST,
-      MONGO_PORT,
-      MONGO_DB_NAME,
-      MONGO_COLLECTION_NAME,
-    } = config();
+    const MONGO_USERNAME = Deno.env.get("MONGO_USERNAME") || "root";
+    const MONGO_PASSWORD = Deno.env.get("MONGO_PASSWORD") || "example";
+    const MONGO_HOST = Deno.env.get("MONGO_HOST") || "localhost";
+    const MONGO_PORT = parseInt(Deno.env.get("MONGO_PORT") || "27017");
+    const MONGO_DB_NAME = Deno.env.get("MONGO_DB_NAME") || "mydb";
+    const MONGO_COLLECTION_NAME = Deno.env.get("MONGO_COLLECTION_NAME") || "messages";
+    
     const uri =
       `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
+    
+    console.log("loading messages from database...")
+    console.log(`mongodb://${MONGO_USERNAME}:<MONGO_PASSWORD>@${MONGO_HOST}:${MONGO_PORT}`);
 
     const client = new MongoClient();
     try {
@@ -49,19 +51,18 @@ class MessageRepository {
   }
 
   public async addMessage(message: Message): Promise<void> {
-    const {
-      MONGO_USERNAME,
-      MONGO_PASSWORD,
-      MONGO_HOST,
-      MONGO_PORT,
-      MONGO_DB_NAME,
-      MONGO_COLLECTION_NAME,
-    } = config();
+    const MONGO_USERNAME = Deno.env.get("MONGO_USERNAME") || "root";
+    const MONGO_PASSWORD = Deno.env.get("MONGO_PASSWORD") || "example";
+    const MONGO_HOST = Deno.env.get("MONGO_HOST") || "localhost";
+    const MONGO_PORT = parseInt(Deno.env.get("MONGO_PORT") || "27017");
+    const MONGO_DB_NAME = Deno.env.get("MONGO_DB_NAME") || "mydb";
+    const MONGO_COLLECTION_NAME = Deno.env.get("MONGO_COLLECTION_NAME") || "messages";
     const uri =
       `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
 
     const client = new MongoClient();
     try {
+    this.messages.push(message);
       await client.connect(uri);
 
       const db = client.database(MONGO_DB_NAME);
@@ -69,11 +70,9 @@ class MessageRepository {
 
       await collection.insertOne(message);
     } catch (error) {
-      // FIXME: remove this debug output!!!
-      console.log(uri);
+      console.log(`mongodb://${MONGO_USERNAME}:<MONGO_PASSWORD>@${MONGO_HOST}:${MONGO_PORT}`);
       console.error("Error adding message to DB:", error);
     } finally {
-      this.messages.push(message);
       client.close();
     }
   }
