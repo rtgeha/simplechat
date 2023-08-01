@@ -28,6 +28,10 @@ export default function Messages(props: MessagesProps) {
       createdAt: new Date().toISOString(),
     };
     server.sendMessage(msg);
+
+    // TODO: rely on server notification instead of doing this here manually
+    //props.messages.value = props.messages.value.concat(msg);
+
     messageText.value = "";
   };
 
@@ -73,12 +77,13 @@ export default function Messages(props: MessagesProps) {
       <div class="mb-4">
         <ConnectionStateDisplay state={connectionState} />
       </div>
-      <div
-        ref={messagesContainerRef}
-        class="flex-auto w-full h-80 overflow-y-scroll bg-gray-100 p-2 rounded-lg"
-      >
+      <div ref={messagesContainerRef} class="flex-auto w-full h-80 overflow-y-scroll p-2">
         {props.messages.value.map((msg) => (
-          <MessageComponent message={msg} />
+          <MessageComponent
+            message={msg}
+            isCurrentUser={msg.from === currentUserName}
+            key={msg.createdAt}
+          />
         ))}
       </div>
       <div class="w-full mt-4">
@@ -101,18 +106,20 @@ function ConnectionStateDisplay({ state }: { state: Signal<ConnectionState> }) {
       text = "🔴 Disconnected";
       break;
   }
-  return <span class="text-center block py-2 px-4 text-lg font-bold bg-gray-100 rounded">{text}</span>;
+  return <span class="text-center block py-2 px-4 text-lg font-bold rounded">{text}</span>;
 }
 
-function MessageComponent({ message }: { message: Message }) {
+function MessageComponent({ message, isCurrentUser }: { message: Message; isCurrentUser: boolean }) {
   const time = twas(new Date(message.createdAt).getTime());
   return (
-    <div class="flex flex-col mb-4.5">
-      <div class="flex items-baseline mb-1.5">
-        <span class="mr-2 font-bold">{message.from}</span>
+    <div class={`flex flex-col mb-2 ${isCurrentUser ? "items-end" : "items-start"}`} style={{ maxWidth: "80%" }}>
+      <div class={`bg-${isCurrentUser ? "green" : "gray"}-100 rounded-lg py-2 px-3 text-sm max-w-sm`}>
+        <p class={`text-${isCurrentUser ? "green" : "gray"}-800 font-bold mb-1`}>
+          {isCurrentUser ? "You" : message.from}
+        </p>
+        <p class="text-gray-800">{message.message}</p>
         <span class="text-xs text-gray-400 font-extralight">{time}</span>
       </div>
-      <p class="text-sm text-gray-800">{message.message}</p>
     </div>
   );
 }
