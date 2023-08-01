@@ -1,14 +1,17 @@
 import { HandlerContext } from "$fresh/server.ts";
+import MessageRepository from "../../communication/messageRepository.ts";
 import { Message } from "../../communication/types.ts";
 
 export async function handler(
   req: Request,
   _ctx: HandlerContext,
 ): Promise<Response> {
+  const messagesRepo = MessageRepository.getInstance();
   const message = (await req.json()) as Message;
   console.dir(message);
 
   // TODO: store to DB
+  messagesRepo.addMessage(message);
 
   // notify other clients
   const channel = new BroadcastChannel("chat");

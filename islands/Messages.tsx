@@ -16,7 +16,7 @@ enum ConnectionState {
 }
 
 export default function Messages(props: MessagesProps) {
-  const connectionState = useSignal(ConnectionState.Disconnected);
+  const connectionState = useSignal(ConnectionState.Connected);
   const messageText = useSignal("");
   const currentUserName = props.userName;
   const messagesContainerRef = useRef<HTMLDivElement>(null);

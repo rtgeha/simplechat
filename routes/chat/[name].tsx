@@ -2,21 +2,12 @@ import { PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/runtime.ts";
 import { useSignal } from "@preact/signals";
 import { Message } from "../../communication/types.ts";
+import MessageRepository from "../../communication/messageRepository.ts";
 import Messages from "../../islands/Messages.tsx";
 
 export default function Chat(props: PageProps) {
-  const messages: Message[] = [
-    {
-      message: "Hello!",
-      from: "JohnDoe",
-      createdAt: new Date().toISOString(),
-    },
-    {
-      message: "Hi there!",
-      from: "JaneDoe",
-      createdAt: new Date().toISOString(),
-    },
-  ];
+  const messagesRepo = MessageRepository.getInstance();
+  const messages: Message[] = messagesRepo.getAllMessages();
   const messagesSignal = useSignal(messages);
   return (
     <>
