@@ -20,8 +20,15 @@ class MessageRepository {
   }
 
   private async loadMessagesFromDB(): Promise<void> {
-    const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_PORT, MONGO_DB_NAME } = config();
-    const uri = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
+    const {
+      MONGO_USERNAME,
+      MONGO_PASSWORD,
+      MONGO_HOST,
+      MONGO_PORT,
+      MONGO_DB_NAME,
+    } = config();
+    const uri =
+      `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
 
     const client = new MongoClient();
     try {
@@ -40,8 +47,15 @@ class MessageRepository {
   }
 
   public async addMessage(message: Message): Promise<void> {
-    const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_HOST, MONGO_PORT, MONGO_DB_NAME } = config();
-    const uri = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
+    const {
+      MONGO_USERNAME,
+      MONGO_PASSWORD,
+      MONGO_HOST,
+      MONGO_PORT,
+      MONGO_DB_NAME,
+    } = config();
+    const uri =
+      `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
 
     const client = new MongoClient();
     try {
