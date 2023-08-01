@@ -53,10 +53,13 @@ export default function Messages(props: MessagesProps) {
     events.addEventListener("message", (e) => {
       const message = JSON.parse(e.data);
       props.messages.value = [...props.messages.value, message];
-      scrollToBottom();
     });
+
+    // Scroll to the bottom when new messages are rendered
+    scrollToBottom();
+
     return () => events.close();
-  }, []);
+  }, [props.messages.value]); // Only trigger the effect when new messages are received
 
   function scrollToBottom() {
     if (messagesContainerRef.current) {
