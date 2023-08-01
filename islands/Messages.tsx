@@ -36,10 +36,7 @@ export default function Messages(props: MessagesProps) {
 
   useEffect(() => {
     const events = new EventSource("/api/connect");
-    events.addEventListener(
-      "open",
-      () => connectionState.value = ConnectionState.Connected,
-    );
+    events.addEventListener("open", () => (connectionState.value = ConnectionState.Connected));
     events.addEventListener("error", () => {
       switch (events.readyState) {
         case EventSource.OPEN:
@@ -64,49 +61,47 @@ export default function Messages(props: MessagesProps) {
   }, []);
 
   return (
-    <div class="mx-auto flex flex-col items-center justify-center">
-      <div>
+    <div class="mx-auto p-4 w-full max-w-screen-md flex flex-col items-center">
+      <div class="mb-4">
         <ConnectionStateDisplay state={connectionState} />
       </div>
-      <div class="flex-auto overflow-y-scroll">
-        {props.messages.value.map((msg) => <MessageComponent message={msg} />)}
+      <div class="flex-auto w-full overflow-y-scroll">
+        {props.messages.value.map((msg) => (
+          <MessageComponent message={msg} />
+        ))}
       </div>
-      <div>
-        <ChatInput
-          userName={props.userName}
-          onSend={send}
-          messageText={messageText}
-        />
+      <div class="w-full mt-4">
+        <ChatInput userName={props.userName} onSend={send} messageText={messageText} />
       </div>
     </div>
   );
 }
 
-function ConnectionStateDisplay({ state }: {state:Signal<ConnectionState>}) {
+function ConnectionStateDisplay({ state }: { state: Signal<ConnectionState> }) {
+  let text = "";
   switch (state.value) {
     case ConnectionState.Connecting:
-      return <span>🟡 Connecting...</span>;
+      text = "🟡 Connecting...";
+      break;
     case ConnectionState.Connected:
-      return <span>🟢 Connected</span>;
+      text = "🟢 Connected";
+      break;
     case ConnectionState.Disconnected:
-      return <span>🔴 Disconnected</span>;
+      text = "🔴 Disconnected";
+      break;
   }
+  return <span class="text-center block py-2 px-4 text-lg font-bold rounded">{text}</span>;
 }
 
 function MessageComponent({ message }: { message: Message }) {
+  const time = twas(new Date(message.createdAt).getTime());
   return (
-    <div class="flex mb-4.5">
-      <div>
-        <p class="flex items-baseline mb-1.5">
-          <span class="mr-2 font-bold">
-            {message.from}
-          </span>
-          <span class="text-xs text-gray-400 font-extralight">
-            {twas(new Date(message.createdAt).getTime())}
-          </span>
-        </p>
-        <p class="text-sm text-gray-800">{message.message}</p>
+    <div class="flex flex-col mb-4.5">
+      <div class="flex items-baseline mb-1.5">
+        <span class="mr-2 font-bold">{message.from}</span>
+        <span class="text-xs text-gray-400 font-extralight">{time}</span>
       </div>
+      <p class="text-sm text-gray-800">{message.message}</p>
     </div>
   );
 }
@@ -127,11 +122,14 @@ function ChatInput({ userName, onSend, messageText }: {
         <textarea
           name="message"
           placeholder="Type your message here"
-          class="block mx-6 w-full focus:text-gray-700"
+          class="block w-full p-2 focus:text-gray-700 border border-gray-300 rounded-lg resize-none"
           value={messageText}
           onKeyDown={(e) => handleChange(e) && e.key === "Enter" && onSend()}
         />
-        <button class="mx-3 p-2 hover:bg-gray-200 rounded-2xl" onClick={onSend}>
+        <button
+          class="mx-3 p-2 bg-gray-200 rounded-2xl hover:bg-gray-300 focus:outline-none"
+          onClick={onSend}
+        >
           <svg
             class="w-5 h-5 text-gray-500 origin-center transform rotate-90"
             xmlns="http://www.w3.org/2000/svg"
