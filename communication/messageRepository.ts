@@ -5,27 +5,27 @@ import { config } from "https://deno.land/x/dotenv/mod.ts";
 class MessageRepository {
   private static instance: MessageRepository;
   private messages: Message[];
-  private collectionName = "messages";
 
   private constructor() {
     this.messages = [];
-    this.loadMessagesFromDB();
   }
 
-  public static getInstance(): MessageRepository {
+  public static async getInstance(): Promise<MessageRepository> {
     if (!MessageRepository.instance) {
       MessageRepository.instance = new MessageRepository();
+      this.instance.messages = await this.loadMessagesFromDB();
     }
     return MessageRepository.instance;
   }
 
-  private async loadMessagesFromDB(): Promise<void> {
+  private static async loadMessagesFromDB(): Promise<Message[]> {
     const {
       MONGO_USERNAME,
       MONGO_PASSWORD,
       MONGO_HOST,
       MONGO_PORT,
       MONGO_DB_NAME,
+      MONGO_COLLECTION_NAME,
     } = config();
     const uri =
       `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
@@ -35,12 +35,14 @@ class MessageRepository {
       await client.connect(uri);
 
       const db = client.database(MONGO_DB_NAME);
-      const collection = db.collection<Message>(this.collectionName);
+      const collection = db.collection<Message>(MONGO_COLLECTION_NAME);
 
-      const messages = await collection.find({}).toArray();
-      this.messages = messages;
+      return await collection.find({}).toArray();
     } catch (error) {
+      // FIXME: remove this debug output!!!
+      console.log(uri);
       console.error("Error loading messages from DB:", error);
+      return []; // fall back to local functionality on DB access error
     } finally {
       client.close();
     }
@@ -53,6 +55,7 @@ class MessageRepository {
       MONGO_HOST,
       MONGO_PORT,
       MONGO_DB_NAME,
+      MONGO_COLLECTION_NAME,
     } = config();
     const uri =
       `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
@@ -62,13 +65,15 @@ class MessageRepository {
       await client.connect(uri);
 
       const db = client.database(MONGO_DB_NAME);
-      const collection = db.collection<Message>(this.collectionName);
+      const collection = db.collection<Message>(MONGO_COLLECTION_NAME);
 
       await collection.insertOne(message);
-      this.messages.push(message);
     } catch (error) {
+      // FIXME: remove this debug output!!!
+      console.log(uri);
       console.error("Error adding message to DB:", error);
     } finally {
+      this.messages.push(message);
       client.close();
     }
   }

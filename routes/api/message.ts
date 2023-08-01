@@ -6,7 +6,7 @@ export async function handler(
   req: Request,
   _ctx: HandlerContext,
 ): Promise<Response> {
-  const messagesRepo = MessageRepository.getInstance();
+  const messagesRepo = await MessageRepository.getInstance();
   const message = (await req.json()) as Message;
 
   // Store in memory and to DB

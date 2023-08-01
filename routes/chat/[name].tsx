@@ -5,8 +5,9 @@ import { Message } from "../../communication/types.ts";
 import MessageRepository from "../../communication/messageRepository.ts";
 import Messages from "../../islands/Messages.tsx";
 
+const messagesRepo = await MessageRepository.getInstance();
+
 export default function Chat(props: PageProps) {
-  const messagesRepo = MessageRepository.getInstance();
   const messages: Message[] = messagesRepo.getAllMessages();
   const messagesSignal = useSignal(messages);
   return (
