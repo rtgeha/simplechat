@@ -44,7 +44,6 @@ export default function Home() {
             <input
               type="text"
               name="username"
-              defaultValue="ANONYMOUS"
               required
               placeholder="Enter your username"
               className="px-4 py-2 mb-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
