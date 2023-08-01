@@ -33,7 +33,10 @@ export default function Messages(props: MessagesProps) {
 
   useEffect(() => {
     const events = new EventSource("/api/connect");
-    events.addEventListener("open", () => (connectionState.value = ConnectionState.Connected));
+    events.addEventListener(
+      "open",
+      () => (connectionState.value = ConnectionState.Connected),
+    );
     events.addEventListener("error", () => {
       switch (events.readyState) {
         case EventSource.OPEN:
@@ -73,7 +76,10 @@ export default function Messages(props: MessagesProps) {
       <div class="mb-4">
         <ConnectionStateDisplay state={connectionState} />
       </div>
-      <div ref={messagesContainerRef} class="flex-auto w-full h-80 overflow-y-scroll p-2 bg-green-200 rounded-lg">
+      <div
+        ref={messagesContainerRef}
+        class="flex-auto w-full h-80 overflow-y-scroll p-2 bg-green-200 rounded-lg"
+      >
         {props.messages.value.map((msg) => (
           <MessageComponent
             message={msg}
@@ -83,7 +89,11 @@ export default function Messages(props: MessagesProps) {
         ))}
       </div>
       <div class="w-full mt-4">
-        <ChatInput userName={props.userName} onSend={send} messageText={messageText} />
+        <ChatInput
+          userName={props.userName}
+          onSend={send}
+          messageText={messageText}
+        />
       </div>
     </div>
   );
@@ -102,15 +112,32 @@ function ConnectionStateDisplay({ state }: { state: Signal<ConnectionState> }) {
       text = "🔴 Disconnected";
       break;
   }
-  return <span class="text-center block py-2 px-4 text-lg font-bold rounded">{text}</span>;
+  return (
+    <span class="text-center block py-2 px-4 text-lg font-bold rounded">
+      {text}
+    </span>
+  );
 }
 
-function MessageComponent({ message, isCurrentUser }: { message: Message; isCurrentUser: boolean }) {
+function MessageComponent(
+  { message, isCurrentUser }: { message: Message; isCurrentUser: boolean },
+) {
   const time = twas(new Date(message.createdAt).getTime());
   return (
-    <div class={`flex flex-col mb-2 ${isCurrentUser ? "items-end" : "items-start"}`} style={{ maxWidth: "80%" }}>
-      <div class={`bg-${isCurrentUser ? "green" : "gray"}-100 rounded-lg py-2 px-3 text-sm max-w-sm`}>
-        <p class={`text-${isCurrentUser ? "green" : "gray"}-800 font-bold mb-1`}>
+    <div
+      class={`flex flex-col mb-2 ${
+        isCurrentUser ? "items-end" : "items-start"
+      }`}
+      style={{ maxWidth: "80%" }}
+    >
+      <div
+        class={`bg-${
+          isCurrentUser ? "green" : "gray"
+        }-100 rounded-lg py-2 px-3 text-sm max-w-sm`}
+      >
+        <p
+          class={`text-${isCurrentUser ? "green" : "gray"}-800 font-bold mb-1`}
+        >
           {isCurrentUser ? "You" : message.from}
         </p>
         <p class="text-gray-800">{message.message}</p>
