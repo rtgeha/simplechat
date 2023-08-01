@@ -64,7 +64,10 @@ export default function Messages(props: MessagesProps) {
   }, []);
 
   return (
-    <div class="mx-auto flex flex-col items-center justify-center" height="60%">
+    <div class="mx-auto flex flex-col items-center justify-center">
+      <div>
+        <ConnectionStateDisplay state={connectionState} />
+      </div>
       <div class="flex-auto overflow-y-scroll">
         {props.messages.value.map((msg) => <MessageComponent message={msg} />)}
       </div>
@@ -77,6 +80,17 @@ export default function Messages(props: MessagesProps) {
       </div>
     </div>
   );
+}
+
+function ConnectionStateDisplay({ state }: {state:Signal<ConnectionState>}) {
+  switch (state.value) {
+    case ConnectionState.Connecting:
+      return <span>🟡 Connecting...</span>;
+    case ConnectionState.Connected:
+      return <span>🟢 Connected</span>;
+    case ConnectionState.Disconnected:
+      return <span>🔴 Disconnected</span>;
+  }
 }
 
 function MessageComponent({ message }: { message: Message }) {
