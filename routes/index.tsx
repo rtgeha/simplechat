@@ -28,21 +28,33 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>simplechat</title>
+        <title>Simple Chat</title>
       </Head>
-      <div class="px-4 py-8 mx-auto bg-[#86efac]">
-        <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
+      <div className="px-4 py-8 mx-auto bg-[#86efac] min-h-screen">
+        <div className="max-w-screen-md mx-auto flex flex-col items-center justify-center">
           <img
-            class="my-6"
+            className="my-6"
             src="/logo.svg"
             width="128"
             height="128"
             alt="the fresh logo: a sliced lemon dripping with juice"
           />
-          <h1 class="text-4xl font-bold">Welcome to fresh chat</h1>
-          <form method="post">
-            <input type="text" name="username" value="ANONYMOUS" required />
-            <button type="submit">Start chatting</button>
+          <h1 className="text-4xl font-bold mb-4">Welcome to Fresh Chat</h1>
+          <form className="flex flex-col items-center" method="post">
+            <input
+              type="text"
+              name="username"
+              defaultValue="ANONYMOUS"
+              required
+              placeholder="Enter your username"
+              className="px-4 py-2 mb-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              Start Chatting
+            </button>
           </form>
         </div>
       </div>
